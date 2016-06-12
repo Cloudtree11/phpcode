@@ -1,3 +1,12 @@
+<?php
+  // create short variable names
+  $tireqty = $_POST['tireqty'];
+  $oilqty = $_POST['oilqty'];
+  $sparkqty = $_POST['sparkqty'];
+  $address = $_POST['address'];
+  $DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'];
+  $date = date('H:i, jS F Y');
+?>
 <html>
 <head>
   <title>Bob's Auto Parts - Order Reaults</title>
@@ -6,15 +15,14 @@
 <h1>Bob's Auto Parts</h1>
 <h2>Order Results</h2>
 <?php
-  //echo "<p>Order processed at ".date('H:i, jS F Y')."</p>";
-  $tireqty = $_POST['tireqty'];
-  $oilqty = $_POST['oilqty'];
-  $sparkqty = $_POST['sparkqty'];
 
-  echo '<p>Your order is as follows: </p>';
+  echo "<p>Order processed at ".date('H:i, jS F Y')."</p>";
+  echo "<p>Your order is as follows: </p>";
 
   $totalqty = 0;
   $totalqty = $tireqty + $oilqty + $sparkqty;
+ 
+  echo 'Item ordered: '.$totalqty.'<br />';
 
   if($totalqty == 0) {
     echo "You didn't order anything on the previous page!<br />";
@@ -28,7 +36,6 @@
       echo $sparkqty.' spark plugs<br />';
   }
 
-  echo 'Item ordered: '.$totalqty.'<br />';
 
   if($tireqty < 10) {
     $discount = 0;
@@ -49,6 +56,8 @@
   $totalamount = $tireqty * TIREPRICE
                + $oilqty * OILPRICE
 			   + $sparkqty * SPARKPRICE;
+
+  $totalamount = number_format($totalmount, 2, '.', ' ');
 
   echo "Subtotal: $".number_format($totalamount,2).'<br />';
 
