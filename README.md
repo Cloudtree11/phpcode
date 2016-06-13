@@ -1,2 +1,2 @@
 # phpcode
-Learing PHP by myself
+Learning PHP by myself
