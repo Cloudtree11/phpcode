@@ -1,3 +1,4 @@
+
 <?php
   // create short variable names
   $tireqty = $_POST['tireqty'];
@@ -7,6 +8,7 @@
   $DOCUMENT_ROOT = $_SERVER['DOCUMENT_ROOT'];
   $date = date('H:i, jS F Y');
 ?>
+
 <html>
 <head>
   <title>Bob's Auto Parts - Order Reaults</title>
@@ -36,17 +38,6 @@
       echo $sparkqty.' spark plugs<br />';
   }
 
-
-  if($tireqty < 10) {
-    $discount = 0;
-  } elseif (($tireqty >= 10) && ($tireqty <= 49)) {
-    $discount = 5;
-  } else if (($tireqty >= 50) && ($tireqty <= 99)) {
-    $discount = 10;
-  }  elseif ($tireqty >= 100) {
-    $discount = 15;
-  } 
-
   $totalamount = 0.00;
 
   define('TIREPRICE', 100);
@@ -59,38 +50,28 @@
 
   $totalamount = number_format($totalmount, 2, '.', ' ');
 
-  echo "Subtotal: $".number_format($totalamount,2).'<br />';
+  echo "<p>Total of order is $".$totalamount."</p>";
+  echo "<p>Address to ship to is ".$address."</p>";
 
-  $taxrate = 0.10;
-  $totalamount = $totalamount * (1 + $taxrate);
-  echo "Total including tax: $".number_format($totalamount,2)."<br />";
+  $outputstring = $date."\t".$tireqty." tires \t".$oilqty." oil\t"
+                  .$sparkqty." spark plugs\t\$".$totalamount
+                  ."\t".$address."\n";
 
-  /*echo 'isset($tireqty):'.isset($tireqty).'<br />';
-  echo 'isset($nothere):'.isset($nothere).'<br />';
-  echo 'empty($tireqty):'.empty($tireqty).'<br />';
-  echo 'empty($nothere):'.empty($nothere).'<br />';*/
+  @ $fp = fopen("$DOCUMENT_ROOT/../orders/order.txt", 'ab');  
 
-  $find = $_POST['find'];
+  flock($fp, LOCK_EX);
 
-  switch($find) {
-    case "a" :
-      echo "<p>Regular customer.</p>";
-	  break;
-    case "b" :
-      echo "<p>Customer referred by TV advert.</p>";
-	  break;
-    case "c" :
-      echo "<p>Customer referred by phone directory.</p>";
-	  break;
-    case "d" :
-      echo "<p>Customer referred by word of mouth.</p>";
-	  break;
-    default :
-      echo "<p>We do not know how this customer found us.</p>";
-      break;
+  if(!$fp) {
+    echo "<p><strong> Your order could not be processed at this time.
+          Please try again later.</strong></p></body></html>";
+    exit
   }
 
+  fwrite($fp, $outputstring, strlen($outputstring));
+  flock($fp, LOCK_UN);
+  fclose($fp);
 
+  echo "<p>Order written.</p>"
 
 ?>
 </body>
